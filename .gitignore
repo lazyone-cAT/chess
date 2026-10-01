@@ -28,3 +28,5 @@ Thumbs.db
 # Test/Debug artifacts
 shot-*.png
 shot*.mjs
+*.bat
+
