@@ -516,6 +516,23 @@ input:focus {
   box-shadow: 0 0 0 1px rgba(255, 63, 109, 0.2);
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.flip-btn {
+  font-size: 12.5px;
+  padding: 9px 15px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+.flip-btn:hover {
+  color: var(--gold-2);
+  border-color: rgba(240, 192, 74, 0.55);
+  box-shadow: 0 0 0 1px rgba(240, 192, 74, 0.2);
+}
+
 .layout {
   display: flex;
   gap: 24px;
@@ -656,6 +673,23 @@ input:focus {
 .board-shake {
   position: relative;
   will-change: transform;
+}
+.board-wrap.flipping .board-shake {
+  animation: flipPulse 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes flipPulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  35% {
+    transform: scale(0.965);
+    filter: brightness(1.35);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
 }
 .board {
   position: relative;
@@ -1379,6 +1413,9 @@ input:focus {
   .st-slash,
   .cutin,
   .cinematic * {
+    animation: none !important;
+  }
+  .board-wrap.flipping .board-shake {
     animation: none !important;
   }
 }

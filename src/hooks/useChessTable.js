@@ -58,6 +58,7 @@ export function useChessTable() {
   const [screen, setScreen] = useState('home');
   const [mode, setMode] = useState(null);
   const [myColor, setMyColor] = useState(null);
+  const [orientation, setOrientation] = useState('w');
   const [opponentName, setOpponentName] = useState('Friend');
   const [room, setRoom] = useState(null);
   const [statusMsg, setStatusMsg] = useState('');
@@ -332,6 +333,7 @@ export function useChessTable() {
     myColorRef.current = null;
     setMode('local');
     setMyColor(null);
+    setOrientation('w');
     setBackdrop('game');
     setRoom({ code: null, role: 'local' });
     setChatVisible(false);
@@ -440,6 +442,7 @@ export function useChessTable() {
       myColorRef.current = 'w';
       setMode('online');
       setMyColor('w');
+      setOrientation('w');
       setBackdrop('game');
       const peer = new Peer(ROOM_PREFIX + code, { debug: 0 });
       peerRef.current = peer;
@@ -473,6 +476,7 @@ export function useChessTable() {
       myColorRef.current = 'b';
       setMode('online');
       setMyColor('b');
+      setOrientation('b');
       setBackdrop('game');
       const peer = new Peer(undefined, { debug: 0 });
       peerRef.current = peer;
@@ -534,6 +538,7 @@ export function useChessTable() {
     myColorRef.current = null;
     setMode(null);
     setMyColor(null);
+    setOrientation('w');
     setRoom(null);
     setChat([]);
     setChatVisible(true);
@@ -563,6 +568,8 @@ export function useChessTable() {
 
   const closeCinematic = useCallback(() => setCinematic(null), []);
 
+  const flipBoard = useCallback(() => setOrientation((o) => (o === 'w' ? 'b' : 'w')), []);
+
   /* ---------------- effects ---------------- */
   useEffect(() => {
     return () => {
@@ -584,6 +591,8 @@ export function useChessTable() {
     screen,
     mode,
     myColor,
+    orientation,
+    flipBoard,
     opponentName,
     room,
     playerName,

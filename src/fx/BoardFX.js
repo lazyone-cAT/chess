@@ -41,13 +41,14 @@ function drawGlyph(ctx, glyph, font, x, y, style) {
 }
 
 export class BoardFX {
-  constructor({ canvas, boardEl, shakeEl, getBoard, getInteraction, getQueueDepth, reduced }) {
+  constructor({ canvas, boardEl, shakeEl, getBoard, getInteraction, getOrientation, getQueueDepth, reduced }) {
     this.canvas = canvas;
     this.ctx = canvas ? canvas.getContext('2d') : null;
     this.boardEl = boardEl;
     this.shakeEl = shakeEl;
     this.getBoard = getBoard;
     this.getInteraction = getInteraction || (() => ({}));
+    this.getOrientation = getOrientation || (() => 'w');
     this.getQueueDepth = getQueueDepth || (() => 0);
     this.reduced = !!reduced;
 
@@ -109,7 +110,12 @@ export class BoardFX {
   }
 
   centerOf(sq) {
-    return squareCenter(sq, this.S);
+    return squareCenter(sq, this.S, this.getOrientation());
+  }
+
+  setOrientation() {
+    if (!this.ready) return;
+    this.layoutAll();
   }
 
   /* ---------------- pieces ---------------- */

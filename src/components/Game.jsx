@@ -17,7 +17,9 @@ export default function Game({ table }) {
     note,
     leaveTable,
     sendChat,
-    setStatusMsg
+    setStatusMsg,
+    orientation,
+    flipBoard
   } = table;
 
   const underInSide = mode === 'local';
@@ -58,9 +60,18 @@ export default function Game({ table }) {
             </>
           )}
         </div>
-        <button className="leave-btn" onClick={leaveTable}>
-          Leave table
-        </button>
+        <div className="topbar-actions">
+          <button
+            className="flip-btn"
+            onClick={flipBoard}
+            title={'Viewing from ' + (orientation === 'w' ? 'White' : 'Black') + "'s side"}
+          >
+            &#8645; <span>{orientation === 'w' ? 'White' : 'Black'} view</span>
+          </button>
+          <button className="leave-btn" onClick={leaveTable}>
+            Leave table
+          </button>
+        </div>
       </div>
 
       <div className="layout">

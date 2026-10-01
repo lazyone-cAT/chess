@@ -2,20 +2,21 @@ import { useEffect, useMemo, useRef } from 'react';
 import { FILES } from '../lib/glyphs';
 import { BoardFX } from '../fx/BoardFX';
 
-const SQUARES = (() => {
+const buildSquares = (orientation) => {
   const list = [];
+  const flipped = orientation === 'b';
   for (let r = 0; r < 8; r++) {
     for (let f = 0; f < 8; f++) {
       list.push({
-        sq: FILES[f] + (8 - r),
+        sq: flipped ? FILES[7 - f] + (r + 1) : FILES[f] + (8 - r),
         light: (r + f) % 2 === 0,
-        file: r === 7 ? FILES[f] : null,
-        rank: f === 0 ? String(8 - r) : null
+        file: r === 7 ? (flipped ? FILES[7 - f] : FILES[f]) : null,
+        rank: f === 0 ? String(flipped ? r + 1 : 8 - r) : null
       });
     }
   }
   return list;
-})();
+};
 
 export default function Board({ table }) {
   const {
@@ -31,16 +32,39 @@ export default function Board({ table }) {
     onSquareClick,
     reduced,
     introKey,
+    orientation,
     getQueueDepth
   } = table;
 
   const boardRef = useRef(null);
   const canvasRef = useRef(null);
   const shakeRef = useRef(null);
+  const wrapRef = useRef(null);
   const hoverRef = useRef(null);
   const selectedRef = useRef(null);
+  const orientationRef = useRef(orientation);
+  const orientPulseRef = useRef(false);
+  orientationRef.current = orientation;
   selectedRef.current = selected;
   hoverRef.current = hover;
+
+  const squares = useMemo(() => buildSquares(orientation), [orientation]);
+
+  useEffect(() => {
+    if (!orientPulseRef.current) {
+      orientPulseRef.current = true;
+      return;
+    }
+    const fx = fxRef.current;
+    if (fx && fx.setOrientation) fx.setOrientation(orientation);
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    wrap.classList.remove('flipping');
+    void wrap.offsetWidth;
+    wrap.classList.add('flipping');
+    const t = setTimeout(() => wrap && wrap.classList.remove('flipping'), 400);
+    return () => clearTimeout(t);
+  }, [orientation, fxRef]);
 
   useEffect(() => {
     const fx = new BoardFX({
@@ -49,6 +73,7 @@ export default function Board({ table }) {
       shakeEl: shakeRef.current,
       getBoard: () => game.board(),
       getInteraction: () => ({ selected: selectedRef.current, hover: hoverRef.current }),
+      getOrientation: () => orientationRef.current,
       getQueueDepth,
       reduced
     });
@@ -73,10 +98,10 @@ export default function Board({ table }) {
   const checkClass = useMemo(() => (gameOver && checkSq ? 'over' : ''), [gameOver, checkSq]);
 
   return (
-    <div className={'board-wrap ' + checkClass} key={introKey}>
+    <div className={'board-wrap ' + checkClass} key={introKey} ref={wrapRef}>
       <div className="board-shake" ref={shakeRef}>
         <div className="board" ref={boardRef}>
-          {SQUARES.map(({ sq, light, file, rank }) => {
+          {squares.map(({ sq, light, file, rank }) => {
             const hint = hints[sq];
             const cls = [
               'sq',

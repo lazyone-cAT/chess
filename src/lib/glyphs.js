@@ -23,10 +23,13 @@ export const VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
 export const FONT_STACK =
   '"Segoe UI Symbol","Noto Sans Symbols 2","Noto Sans Symbols","Apple Symbols","DejaVu Sans",sans-serif';
 
-export function squareCenter(sq, size) {
+export function squareCenter(sq, size, orientation = 'w') {
   const f = FILES.indexOf(sq[0]);
-  const r = 8 - parseInt(sq[1], 10);
-  return { x: (f + 0.5) * size, y: (r + 0.5) * size };
+  const rank = parseInt(sq[1], 10);
+  if (orientation === 'b') {
+    return { x: (7 - f + 0.5) * size, y: (rank - 0.5) * size };
+  }
+  return { x: (f + 0.5) * size, y: (8 - rank + 0.5) * size };
 }
 
 /* ------------------------------------------------------------------
